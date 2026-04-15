@@ -1,0 +1,282 @@
+import React, { useState, useRef } from 'react';
+import { 
+  Brain, 
+  Cpu, 
+  MessageSquare, 
+  Image as ImageIcon, 
+  Mic, 
+  Search, 
+  ChevronRight, 
+  BookOpen, 
+  Users, 
+  Play,
+  Upload,
+  Video
+} from 'lucide-react';
+
+const ToolCard = ({ icon: Icon, title, slogan, pitch, project, color }) => (
+  <div className={`p-6 rounded-2xl border border-gray-200 bg-white shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 group`}>
+    <div className={`w-14 h-14 rounded-xl ${color} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform`}>
+      <Icon className="text-white w-8 h-8" />
+    </div>
+    <h3 className="text-2xl font-bold text-gray-900 mb-2">{title}</h3>
+    <p className="text-blue-600 font-semibold mb-4 italic">"{slogan}"</p>
+    <p className="text-gray-600 mb-6 leading-relaxed">{pitch}</p>
+    <div className="bg-gray-50 p-4 rounded-lg border-l-4 border-blue-500">
+      <h4 className="text-sm font-bold uppercase tracking-wider text-gray-500 mb-2">Student Project Idea</h4>
+      <p className="text-gray-800 text-sm">{project}</p>
+    </div>
+  </div>
+);
+
+const App = () => {
+  const [activeTab, setActiveTab] = useState('all');
+  const [videoSrc, setVideoSrc] = useState(null);
+  
+  // Refs for navigation scrolling
+  const toolsRef = useRef(null);
+  const videoSectionRef = useRef(null);
+  const heroRef = useRef(null);
+  const fileInputRef = useRef(null);
+
+  const scrollToSection = (elementRef) => {
+    elementRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const url = URL.createObjectURL(file);
+      setVideoSrc(url);
+    }
+  };
+
+  const tools = [
+    {
+      id: 'huggingface',
+      title: 'Hugging Face',
+      icon: Brain,
+      color: 'bg-yellow-400',
+      slogan: 'Big Research, Simplified.',
+      pitch: 'The central hub for the AI community. It gives you access to thousands of pre-trained models that can summarize text, translate languages, and analyze data without needing to write complex code.',
+      project: 'Summarize massive research articles for a History paper using the "DistilBART" model to identify key dates and themes instantly.',
+      category: 'research'
+    },
+    {
+      id: 'tensorflow',
+      title: 'TensorFlow',
+      icon: Cpu,
+      color: 'bg-orange-500',
+      slogan: 'Build the Brains of Tomorrow.',
+      pitch: 'An end-to-end framework for building and training machine learning models. It’s the industrial-grade tool used by scientists to teach computers how to recognize patterns.',
+      project: 'Predict student study habits and test readiness by analyzing a dataset of sleep hours vs. quiz scores for a Math or Science fair project.',
+      category: 'building'
+    },
+    {
+      id: 'ibmwatson',
+      title: 'IBM Watson',
+      icon: MessageSquare,
+      color: 'bg-blue-600',
+      slogan: 'Business-Grade Intelligence for Your Classroom.',
+      pitch: 'Watson is a powerful enterprise AI platform that excels at Natural Language Understanding (NLU). It helps users extract metadata from text, like concepts, entities, and keywords.',
+      project: 'Analyze complex themes in Shakespearean literature or high-stakes debate transcripts using Watson’s language analysis tools.',
+      category: 'research'
+    },
+    {
+      id: 'dalle',
+      title: 'DALL·E',
+      icon: ImageIcon,
+      color: 'bg-purple-500',
+      slogan: 'From Imagination to Illustration.',
+      pitch: 'A revolutionary system that creates stunning, realistic images and art from simple text descriptions. Perfect for visual learners and creative storytellers.',
+      project: 'Create vivid historical scene illustrations (like the Silk Road or Civil Rights marches) to bring a Social Studies presentation to life.',
+      category: 'creative'
+    },
+    {
+      id: 'whisper',
+      title: 'Whisper',
+      icon: Mic,
+      color: 'bg-teal-500',
+      slogan: 'Every Word, Perfectly Captured.',
+      pitch: 'An automatic speech recognition (ASR) system that transcribes and translates audio with near-human accuracy. It can even handle different accents and background noise.',
+      project: 'Transcribe oral history interviews with local veterans or community leaders for a school newspaper or primary source history assignment.',
+      category: 'creative'
+    }
+  ];
+
+  return (
+    <div className="min-h-screen bg-slate-50 font-sans text-gray-900 scroll-smooth">
+      {/* Navigation */}
+      <nav className="bg-white border-b sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+          <div 
+            className="flex items-center gap-2 cursor-pointer" 
+            onClick={() => scrollToSection(heroRef)}
+          >
+            <div className="bg-blue-600 p-1.5 rounded-lg">
+              <Brain className="text-white w-6 h-6" />
+            </div>
+            <span className="font-extrabold text-xl tracking-tight">AI EduHub</span>
+          </div>
+          <div className="hidden md:flex gap-8 text-sm font-medium text-gray-600">
+            <button onClick={() => scrollToSection(heroRef)} className="hover:text-blue-600">Home</button>
+            <button onClick={() => scrollToSection(toolsRef)} className="hover:text-blue-600">Tools</button>
+            <button onClick={() => scrollToSection(videoSectionRef)} className="hover:text-blue-600">Ad Campaign</button>
+          </div>
+          <button 
+            onClick={() => scrollToSection(toolsRef)}
+            className="bg-blue-600 text-white px-5 py-2 rounded-full text-sm font-bold hover:bg-blue-700 transition-colors shadow-md"
+          >
+            Get Started
+          </button>
+        </div>
+      </nav>
+
+      {/* Hero Section */}
+      <header ref={heroRef} className="py-20 bg-gradient-to-br from-blue-700 to-indigo-900 text-white">
+        <div className="max-w-5xl mx-auto px-4 text-center">
+          <h1 className="text-5xl md:text-7xl font-black mb-6 leading-tight">
+            Supercharge Your <span className="text-blue-300">Academics</span> with AI
+          </h1>
+          <p className="text-xl md:text-2xl text-blue-100 mb-10 max-w-3xl mx-auto leading-relaxed">
+            From transcribing oral histories to predicting study habits, explore the professional-grade tools that are changing how high schoolers learn.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <button 
+              onClick={() => scrollToSection(toolsRef)}
+              className="bg-white text-blue-900 px-8 py-4 rounded-xl font-bold text-lg hover:bg-blue-50 transition-all flex items-center justify-center gap-2"
+            >
+              Explore the Tools <ChevronRight size={20} />
+            </button>
+            <button 
+              onClick={() => scrollToSection(videoSectionRef)}
+              className="bg-blue-800/40 border border-blue-400/30 text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-blue-800/60 transition-all"
+            >
+              Watch Campaign Video
+            </button>
+          </div>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="max-w-7xl mx-auto px-4 py-16">
+        <div ref={toolsRef} className="scroll-mt-24">
+          <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
+            <div>
+              <h2 className="text-3xl font-bold mb-2">The AI Development Suite</h2>
+              <p className="text-gray-600">Select a tool to see how it can be used for your next school project.</p>
+            </div>
+            <div className="flex bg-gray-200 p-1 rounded-xl">
+              {['all', 'research', 'building', 'creative'].map((tab) => (
+                <button
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
+                  className={`px-4 py-2 rounded-lg text-sm font-bold capitalize transition-all ${
+                    activeTab === tab ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-600 hover:text-gray-900'
+                  }`}
+                >
+                  {tab}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {tools
+              .filter(tool => activeTab === 'all' || tool.category === activeTab)
+              .map((tool) => (
+                <ToolCard key={tool.id} {...tool} />
+              ))}
+          </div>
+        </div>
+
+        {/* Video Campaign Section */}
+        <section ref={videoSectionRef} className="mt-24 bg-white rounded-3xl p-8 md:p-12 border border-gray-200 shadow-sm scroll-mt-24">
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-bold uppercase tracking-wider mb-4">
+                <Video size={14} /> Official Ad Campaign
+              </div>
+              <h2 className="text-4xl font-black mb-6">Our NotebookLM Campaign Video</h2>
+              <p className="text-lg text-gray-700 mb-8 leading-relaxed">
+                Check out our AI-generated promotional video. This ad highlights how Hugging Face, DALL-E, and other tools empower students to reach their full academic potential.
+              </p>
+              
+              {!videoSrc && (
+                <div className="space-y-4">
+                  <p className="text-sm font-bold text-gray-500 uppercase">Ready to present?</p>
+                  <button 
+                    onClick={() => fileInputRef.current.click()}
+                    className="flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-blue-700 transition-all shadow-lg"
+                  >
+                    <Upload size={20} /> Load Your Ad Video
+                  </button>
+                  <input 
+                    type="file" 
+                    ref={fileInputRef} 
+                    onChange={handleFileChange} 
+                    accept="video/*" 
+                    className="hidden" 
+                  />
+                  <p className="text-xs text-gray-400 italic">Click to select your NotebookLM video file from your computer.</p>
+                </div>
+              )}
+
+              {videoSrc && (
+                <button 
+                  onClick={() => setVideoSrc(null)}
+                  className="text-red-500 text-sm font-bold hover:underline"
+                >
+                  Reset / Change Video
+                </button>
+              )}
+            </div>
+
+            <div className="relative group">
+              <div className="aspect-video bg-gray-900 rounded-2xl shadow-2xl overflow-hidden flex items-center justify-center border-4 border-gray-800">
+                {videoSrc ? (
+                  <video 
+                    src={videoSrc} 
+                    controls 
+                    className="w-full h-full object-contain"
+                    autoPlay
+                  />
+                ) : (
+                  <div className="text-center p-8">
+                    <div className="w-20 h-20 bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4 border border-gray-700">
+                      <Play className="text-gray-500 fill-current ml-1" size={32} />
+                    </div>
+                    <p className="text-gray-500 font-medium">Video Player Ready</p>
+                    <p className="text-gray-600 text-xs mt-2">Upload your campaign video to preview</p>
+                  </div>
+                )}
+              </div>
+              {/* Decorative elements */}
+              <div className="absolute -top-4 -right-4 w-24 h-24 bg-blue-500/10 rounded-full -z-10"></div>
+              <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-indigo-500/10 rounded-full -z-10"></div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      {/* Footer */}
+      <footer className="bg-gray-900 text-gray-400 py-12">
+        <div className="max-w-7xl mx-auto px-4 text-center">
+          <div className="flex justify-center gap-3 mb-6">
+            <div className="bg-gray-800 p-2 rounded-lg"><Brain size={20}/></div>
+            <div className="bg-gray-800 p-2 rounded-lg"><Cpu size={20}/></div>
+            <div className="bg-gray-800 p-2 rounded-lg"><ImageIcon size={20}/></div>
+          </div>
+          <p className="mb-4">© 2024 AI Student Development Ad Campaign Group</p>
+          <div className="flex justify-center gap-6 text-sm">
+            <button onClick={() => scrollToSection(toolsRef)} className="hover:text-white">Research Notes</button>
+            <button className="hover:text-white">Project Rubric</button>
+            <button onClick={() => scrollToSection(toolsRef)} className="hover:text-white">API Docs</button>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+};
+
+export default App;
