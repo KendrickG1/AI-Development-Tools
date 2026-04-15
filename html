@@ -11,7 +11,9 @@ import {
   Users, 
   Play,
   Upload,
-  Video
+  Video,
+  Link as LinkIcon,
+  X
 } from 'lucide-react';
 
 const ToolCard = ({ icon: Icon, title, slogan, pitch, project, color }) => (
@@ -32,6 +34,8 @@ const ToolCard = ({ icon: Icon, title, slogan, pitch, project, color }) => (
 const App = () => {
   const [activeTab, setActiveTab] = useState('all');
   const [videoSrc, setVideoSrc] = useState(null);
+  const [embedUrl, setEmbedUrl] = useState("");
+  const [isLinking, setIsLinking] = useState(false);
   
   // Refs for navigation scrolling
   const toolsRef = useRef(null);
@@ -48,6 +52,16 @@ const App = () => {
     if (file) {
       const url = URL.createObjectURL(file);
       setVideoSrc(url);
+      setEmbedUrl(""); // Clear embed if file is used
+    }
+  };
+
+  const handleEmbedSubmit = (e) => {
+    e.preventDefault();
+    if (embedUrl) {
+      // Basic check for youtube/drive/other to ensure it looks like a URL
+      setVideoSrc(null); // Clear file if embed is used
+      setIsLinking(false);
     }
   };
 
@@ -202,14 +216,19 @@ const App = () => {
                 Check out our AI-generated promotional video. This ad highlights how Hugging Face, DALL-E, and other tools empower students to reach their full academic potential.
               </p>
               
-              {!videoSrc && (
-                <div className="space-y-4">
-                  <p className="text-sm font-bold text-gray-500 uppercase">Ready to present?</p>
+              {!videoSrc && !embedUrl && !isLinking && (
+                <div className="flex flex-wrap gap-4">
                   <button 
                     onClick={() => fileInputRef.current.click()}
                     className="flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-blue-700 transition-all shadow-lg"
                   >
-                    <Upload size={20} /> Load Your Ad Video
+                    <Upload size={20} /> Upload MP4 File
+                  </button>
+                  <button 
+                    onClick={() => setIsLinking(true)}
+                    className="flex items-center gap-2 bg-gray-800 text-white px-6 py-3 rounded-xl font-bold hover:bg-gray-900 transition-all shadow-lg"
+                  >
+                    <LinkIcon size={20} /> Link Video URL
                   </button>
                   <input 
                     type="file" 
@@ -218,42 +237,65 @@ const App = () => {
                     accept="video/*" 
                     className="hidden" 
                   />
-                  <p className="text-xs text-gray-400 italic">Click to select your NotebookLM video file from your computer.</p>
                 </div>
               )}
 
-              {videoSrc && (
+              {isLinking && (
+                <form onSubmit={handleEmbedSubmit} className="space-y-4 bg-gray-50 p-6 rounded-2xl border border-gray-200">
+                  <div className="flex justify-between items-center">
+                    <label className="text-sm font-bold text-gray-700">Embed Video Link</label>
+                    <button type="button" onClick={() => setIsLinking(false)}><X size={18} /></button>
+                  </div>
+                  <input 
+                    type="url" 
+                    placeholder="Paste YouTube, Drive, or Web Link..." 
+                    className="w-full p-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none"
+                    value={embedUrl}
+                    onChange={(e) => setEmbedUrl(e.target.value)}
+                    required
+                  />
+                  <button type="submit" className="w-full bg-blue-600 text-white py-3 rounded-xl font-bold">
+                    Embed Video
+                  </button>
+                </form>
+              )}
+
+              {(videoSrc || embedUrl) && !isLinking && (
                 <button 
-                  onClick={() => setVideoSrc(null)}
-                  className="text-red-500 text-sm font-bold hover:underline"
+                  onClick={() => {setVideoSrc(null); setEmbedUrl("");}}
+                  className="text-red-500 text-sm font-bold hover:underline flex items-center gap-1"
                 >
-                  Reset / Change Video
+                  <X size={14} /> Remove and Change Video
                 </button>
               )}
             </div>
 
-            <div className="relative group">
+            <div className="relative">
               <div className="aspect-video bg-gray-900 rounded-2xl shadow-2xl overflow-hidden flex items-center justify-center border-4 border-gray-800">
                 {videoSrc ? (
                   <video 
                     src={videoSrc} 
                     controls 
                     className="w-full h-full object-contain"
-                    autoPlay
                   />
+                ) : embedUrl ? (
+                  <iframe 
+                    src={embedUrl.replace("watch?v=", "embed/").replace("vimeo.com/", "player.vimeo.com/video/")}
+                    className="w-full h-full"
+                    allowFullScreen
+                    title="Embedded Ad Video"
+                  ></iframe>
                 ) : (
                   <div className="text-center p-8">
                     <div className="w-20 h-20 bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4 border border-gray-700">
                       <Play className="text-gray-500 fill-current ml-1" size={32} />
                     </div>
-                    <p className="text-gray-500 font-medium">Video Player Ready</p>
-                    <p className="text-gray-600 text-xs mt-2">Upload your campaign video to preview</p>
+                    <p className="text-gray-500 font-medium">Player Ready</p>
+                    <p className="text-gray-600 text-xs mt-2">Upload or Link your NotebookLM video</p>
                   </div>
                 )}
               </div>
-              {/* Decorative elements */}
               <div className="absolute -top-4 -right-4 w-24 h-24 bg-blue-500/10 rounded-full -z-10"></div>
-              <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-indigo-500/10 rounded-full -z-10"></div>
             </div>
           </div>
         </section>
@@ -262,11 +304,6 @@ const App = () => {
       {/* Footer */}
       <footer className="bg-gray-900 text-gray-400 py-12">
         <div className="max-w-7xl mx-auto px-4 text-center">
-          <div className="flex justify-center gap-3 mb-6">
-            <div className="bg-gray-800 p-2 rounded-lg"><Brain size={20}/></div>
-            <div className="bg-gray-800 p-2 rounded-lg"><Cpu size={20}/></div>
-            <div className="bg-gray-800 p-2 rounded-lg"><ImageIcon size={20}/></div>
-          </div>
           <p className="mb-4">© 2024 AI Student Development Ad Campaign Group</p>
           <div className="flex justify-center gap-6 text-sm">
             <button onClick={() => scrollToSection(toolsRef)} className="hover:text-white">Research Notes</button>
